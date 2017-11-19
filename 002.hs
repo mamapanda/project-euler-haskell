@@ -9,4 +9,4 @@ fibs :: [Int]
 fibs = 1:1:zipWith (+) fibs (tail fibs)
 
 answer :: Int
-answer = sum . filter even $ takeWhile (< 4000000)fibs
+answer = sum . filter even $ takeWhile (< 4000000) fibs
