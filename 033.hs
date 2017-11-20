@@ -2,66 +2,32 @@
 
 module Main (main) where
 
-import Data.List
-
 main :: IO ()
 main = print answer
 
-data Fraction = Fraction
-                { numerator :: Int
-                , denominator :: Int
-                }
-              deriving (Show)
+-- the fraction must fit the form (10n + c)/(10c + d) == n/d
+-- to be digit-cancellable
+type NDCGroup = (Int, Int, Int)
+type Fraction = (Int, Int)
 
-instance Eq Fraction where
-  (==) lhs rhs = n == n' && d == d'
-    where (Fraction n d) = simplify lhs
-          (Fraction n' d') = simplify rhs
+toFraction :: NDCGroup -> Fraction
+toFraction (n, d, c) = (10 * n + c, 10 * c + d)
 
-mult :: Fraction -> Fraction -> Fraction
-mult (Fraction n d) (Fraction n' d') = Fraction (n * n') (d * d')
+digitCancellable :: NDCGroup -> Bool
+digitCancellable (n, d, c) = 9 * n * (d - c) == c * (n - d)
 
-product' :: [Fraction] -> Fraction
-product' = foldl mult (Fraction 1 1)
+multiply :: Fraction -> Fraction -> Fraction
+multiply (n, d) (n', d') = (n * n', d * d')
 
 simplify :: Fraction -> Fraction
-simplify (Fraction n d)
-  | n == 0 || d == 0 = Fraction (signum n) (signum d)
-  | otherwise = Fraction
-                { numerator = quot n gcd'
-                , denominator = quot d gcd'
-                }
+simplify (n, d) = (quot n gcd', quot d gcd')
   where gcd' = gcd n d
 
-simplified :: Fraction -> Fraction -> Bool
-simplified simple frac = simple == frac && numerator simple < numerator frac
-
-digits :: Int -> [Int]
-digits = reverse . digits'
-  where digits' 0 = []
-        digits' x = digit:digits' x'
-          where (x', digit) = quotRem x 10
-
-digitsToNum :: [Int] -> Int
-digitsToNum = foldl (\acc x -> acc * 10 + x) 0
-
-retardSimplify :: Fraction -> Fraction
-retardSimplify (Fraction n d) = Fraction
-                                { numerator = digitsToNum nDigits'
-                                , denominator = digitsToNum dDigits'
-                                }
-  where nDigits = digits n
-        dDigits = digits d
-        nDigits' = nDigits \\ dDigits
-        dDigits' = dDigits \\ nDigits
-
 answer :: Int
-answer = denominator . simplify $ product' [ frac
-                                           | n <- [10..99]
-                                           , d <- [(n + 1)..99]
-                                           , rem n 10 /= 0
-                                           , rem d 10 /= 0
-                                           , let frac = Fraction n d
-                                                   , p frac
-                                           ]
-  where p = flip simplified <*> retardSimplify
+answer = snd . simplify $ foldl1 multiply [ toFraction ndcGroup
+                                          | n <- [1..9]
+                                          , d <- [(n + 1)..9]
+                                          , c <- [(d + 1)..9]
+                                          , let ndcGroup = (n, d, c)
+                                                  , digitCancellable ndcGroup
+                                          ]
