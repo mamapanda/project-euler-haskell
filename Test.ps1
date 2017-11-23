@@ -55,7 +55,7 @@ function Test-Case($Number) {
     }
 }
 
-foreach ($Entry in $Answers.GetEnumerator() | Sort-Object -Property Name) {
-    make "bin/$($Entry.Name).exe" | Out-Null
-    Test-Case($Entry.Name)
+foreach ($Number in $Answers.Keys | Sort-Object) {
+    make "bin/$Number.exe" | Out-Null
+    Test-Case($Number)
 }
