@@ -34,12 +34,10 @@ eSieve bound = Array.runSTUArray $ do
       Array.writeArray sieve i' False
   return sieve
 
-maxPandigital :: Int
-maxPandigital = 7654321
-
 answer :: Int
 answer = head [ x
-              | x <- [maxPandigital,(maxPandigital - 1)..1]
+              | x <- [maxCandidate,(maxCandidate - 1)..1]
               , sieve!x && nPandigital x
               ]
-  where sieve = eSieve maxPandigital
+  where maxCandidate = 7654321
+        sieve = eSieve maxCandidate
