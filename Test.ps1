@@ -1,3 +1,7 @@
+param (
+    [String]$BaseName
+)
+
 $Answers = @{
     "001" = 233168;
     "002" = 4613732;
@@ -42,10 +46,13 @@ $Answers = @{
     "041" = 7652413;
     "042" = 162;
     "043" = 16695334890;
-    "044" = 5482660
+    "044" = 5482660;
+    "045" = 1533776805
 }
 
 function Test-Case($Number) {
+    make "bin/$Number.exe" | Out-Null
+
     $Binary = "./bin/$Number.exe"
     $Actual = "$(& $Binary)"
     $Expected = $Answers[$Number]
@@ -58,7 +65,12 @@ function Test-Case($Number) {
     }
 }
 
-foreach ($Number in $Answers.Keys | Sort-Object) {
-    make "bin/$Number.exe" | Out-Null
-    Test-Case($Number)
+function Test-All {
+    $Answers.Keys | Sort-Object | % { Test-Case $_ }
+}
+
+if ($BaseName) {
+    Test-Case $BaseName
+} else {
+    Test-All
 }
