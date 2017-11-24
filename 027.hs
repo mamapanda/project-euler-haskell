@@ -13,7 +13,7 @@ prime :: Int -> Bool
 prime x
   | x <= 1 = False
   | otherwise = prime' primes
-  where prime' [] = undefined -- primes is an infinite list
+  where prime' [] = undefined
         prime' (p:ps) = p * p > x || (rem x p /= 0 && prime' ps)
 
 primes :: [Int]
