@@ -2,8 +2,9 @@
 
 module Main (main) where
 
-import Data.List
-import Data.Ord
+-- | package vector
+import Data.Vector ((!))
+import qualified Data.Vector as Vector
 
 main :: IO ()
 main = print answer
@@ -19,16 +20,15 @@ primes = 2:3:filter prime [5,7..]
 primeSums :: Integer -> [Integer]
 primeSums limit = scanl1 (+) $ takeWhile (<= limit) primes
 
+longestPrimeSum :: Integer -> Integer
+longestPrimeSum sumLimit = f (2, 1) 0 0
+  where sums = Vector.fromList $ primeSums sumLimit
+        f best@(primeSum, nPrimes) i j
+          | i == length sums = primeSum
+          | j < 0 || currentSum > sumLimit = f best (i + 1) i
+          | nPrimes' > nPrimes && prime currentSum = f current i (j - 1)
+          | otherwise = f best i (j - 1)
+          where current@(currentSum, nPrimes') = (sums!i - sums!j, i - j)
+
 answer :: Integer
-answer = fst $ maximum' [ (x, i - j)
-                        | i <- [0..(length sums - 1)]
-                        , let sums' = [ (sums!!i - sums!!j, j)
-                                      | j <- [(i - 1),(i - 2)..0]
-                                      , i - j >= 21
-                                      ]
-                                , (x, j) <- takeWhile ((<= limit) . fst) sums'
-                                , prime x
-                        ]
-  where limit = 1000000
-        sums = primeSums limit
-        maximum' = maximumBy (comparing snd)
+answer = longestPrimeSum 999999
