@@ -59,11 +59,13 @@ function Test-Case($Number) {
     make "bin/$Number.exe" | Out-Null
 
     $Binary = "./bin/$Number.exe"
-    $Actual = "$(& $Binary)"
+    $Time = (Measure-Command { $Actual = "$(& $Binary)" }).TotalMilliseconds
+    $Time = [Math]::round($Time)
     $Expected = $Answers[$Number]
 
     if ($Actual -eq $Expected) {
-        Write-Host "${Number}: SUCCESS" -ForegroundColor Green
+        $Color = if ($Time -gt 1000) { "Yellow" } else { "Green" }
+        Write-Host "${Number}: SUCCESS ($Time ms)" -ForegroundColor $Color
     } else {
         $Message = "${Number}: FAILED (Expected: $Expected, Actual: $Actual)"
         Write-Host $Message -ForegroundColor Red
