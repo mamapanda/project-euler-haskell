@@ -2,32 +2,32 @@
 
 module Main (main) where
 
--- | package containers
-import qualified Data.Map.Lazy as Map
+import Data.Ix
+-- | package vector
+import Data.Vector ((!))
+import qualified Data.Vector as Vector
 
 main :: IO ()
 main = print answer
+
+limit :: Int
+limit = 999999
 
 collatz :: Integer -> Integer
 collatz x
   | even x = quot x 2
   | otherwise = 3 * x + 1
 
-nCollatz :: Map.Map Integer Int -> Integer -> (Int, Map.Map Integer Int)
-nCollatz lenMap x
-  | x == 1 = (1, lenMap)
-  | otherwise = case Map.lookup x lenMap of
-                  Just len -> (len, lenMap)
-                  Nothing -> let (len, lenMap') = nCollatz lenMap (collatz x)
-                                 len' = len + 1
-                             in (len', Map.insert x len' lenMap')
+collatzLength :: Integer -> Int
+collatzLength 0 = 0
+collatzLength 1 = 1
+collatzLength x = 1 + if inRange (0, fromIntegral limit) next
+                      then collatzLengths!fromIntegral next
+                      else collatzLength next
+  where next = collatz x
 
-maxCollatz :: Integer -> (Integer, Int)
-maxCollatz xMax = fst $ foldl f ((1, 1), Map.singleton 1 1) [2..xMax]
-  where f (best@(_, maxLen), lenMap) x
-          | collatzLen > maxLen = ((x, collatzLen), lenMap')
-          | otherwise = (best, lenMap')
-          where (collatzLen, lenMap') = nCollatz lenMap x
+collatzLengths :: Vector.Vector Int
+collatzLengths = Vector.generate (limit + 1) (collatzLength . fromIntegral)
 
-answer :: Integer
-answer = fst $ maxCollatz 1000000
+answer :: Int
+answer = Vector.maxIndex collatzLengths
