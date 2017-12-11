@@ -1,14 +1,32 @@
 #include <iostream>
+#include <vector>
+
+std::vector<int> fibonacci(int limit)
+{
+    std::vector<int> result;
+    int x = 1, y = 1, tmp;
+
+    while (x < limit)
+    {
+        result.push_back(x);
+
+        tmp = x;
+        x = y;
+        y += tmp;
+    }
+
+    return result;
+}
 
 int main(void)
 {
-    int i, sum = 0;
+    int sum = 0;
 
-    for (i = 0; i < 1000; ++i)
+    for (int x: fibonacci(4000000))
     {
-        if (i % 3 == 0 || i % 5 == 0)
+        if ((x & 1) == 0)
         {
-            sum += i;
+            sum += x;
         }
     }
 

@@ -1,5 +1,5 @@
-CXX := g++
-CXXFLAGS := -O -Wall -Werror -Wno-unused-result
+CXX := clang-cl
+CXXFLAGS := /O1 /Wall /WX
 SRC := (wildcard *.cpp)
 
 bin/%.exe: %.cpp
