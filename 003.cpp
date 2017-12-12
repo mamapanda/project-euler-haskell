@@ -2,9 +2,9 @@
 #include <iostream>
 
 // x is odd && x >= 3
-uint64_t largest_prime_factor(uint64_t x)
+std::uint64_t largest_prime_factor(std::uint64_t x)
 {
-    uint64_t i;
+    std::uint64_t i;
 
     for (i = 3; i <= x; i += 2)
     {
