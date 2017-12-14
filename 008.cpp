@@ -31,7 +31,7 @@ std::int64_t product_at(int pos, std::string digits)
 
 int main(void)
 {
-    std::int64_t largest, product;
+    std::int64_t largest = 0, product;
     unsigned int i;
     std::string digits(input());
 
